@@ -1,6 +1,6 @@
 ## Go Relax 2
 
-Go Relax 2, is an second attempt to make a cleaner API for writing proper REST API.
+Go Relax 2, is a second attempt to make a cleaner API for writing proper REST API.
 
 ### Usage
 
