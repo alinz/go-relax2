@@ -25,6 +25,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -70,6 +71,7 @@ type RelaxHandler struct {
 //RelaxRequest is a structure that tries to map the params and send it to RelaxFuncHandler as a first argument
 type RelaxRequest struct {
 	params  *map[string]string
+	query   url.Values
 	Request *http.Request
 }
 
@@ -77,6 +79,11 @@ type RelaxRequest struct {
 func (rr *RelaxRequest) Param(name string) string {
 	param, _ := (*rr.params)[name]
 	return param
+}
+
+//Query gets the querystring value
+func (rr *RelaxRequest) Query(name string) string {
+	return rr.query.Get(name)
 }
 
 //RelaxResponse is a structure that wrapps http.ResponseWriter and send it to RelaxFuncHandler as a second argument
@@ -124,7 +131,8 @@ func (r *Relax) mainHandler(w http.ResponseWriter, req *http.Request) {
 
 	if relaxHandler != nil && statusCode == http.StatusOK {
 		params := applyPath(url.Path, relaxHandler.path)
-		relaxHandler.funcHandler(RelaxRequest{params, req}, relaxResponse)
+		query := url.Query()
+		relaxHandler.funcHandler(RelaxRequest{params, query, req}, relaxResponse)
 	} else {
 		var errorMessage string
 		if statusCode == http.StatusNotFound {
